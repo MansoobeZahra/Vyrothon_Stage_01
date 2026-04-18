@@ -4,10 +4,20 @@ import { usePipelineStore } from '../store/pipelineStore'
 import { PRESETS } from '../presets/presets'
 import { CipherIcons } from './CipherIcons'
 import clsx from 'clsx'
-import { Shield } from 'lucide-react'
+import { Shield, Activity, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
 export const Sidebar: React.FC = () => {
-  const { addNode, loadPreset, theme } = usePipelineStore()
+  const { addNode, loadPreset, theme, auditPresets } = usePipelineStore()
+  const [auditReport, setAuditReport] = React.useState<Record<string, boolean> | null>(null)
+  const [isAuditing, setIsAuditing] = React.useState(false)
+
+  const handleAudit = async () => {
+    setIsAuditing(true)
+    const report = await auditPresets()
+    setAuditReport(report)
+    setIsAuditing(false)
+    setTimeout(() => setAuditReport(null), 5000)
+  }
 
   const CATEGORIES = [
     { label: 'Configurable Ciphers', names: ['Caesar', 'XOR', 'Vigenère', 'Rail Fence', 'Substitution', 'Columnar'] },
@@ -38,17 +48,35 @@ export const Sidebar: React.FC = () => {
               key={preset.name}
               onClick={() => loadPreset(preset)}
               className={clsx(
-                'text-left px-3 py-2 rounded text-xs border transition-all duration-200',
+                'text-left px-3 py-2 rounded text-xs border transition-all duration-200 relative group',
                 theme === 'dark'
                   ? 'border-white/10 hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 text-gray-300'
                   : 'border-gray-200 hover:border-[var(--accent)] hover:bg-green-50 text-gray-700'
               )}
             >
-              <div className="font-semibold">{preset.name}</div>
+              <div className="font-semibold flex items-center justify-between">
+                {preset.name}
+                {auditReport?.[preset.name] === true && <CheckCircle size={10} className="text-green-500" />}
+                {auditReport?.[preset.name] === false && <AlertCircle size={10} className="text-red-500" />}
+              </div>
               <div className="text-[var(--muted)] text-[10px] mt-0.5">{preset.description}</div>
             </button>
           ))}
         </div>
+        
+        <button
+          onClick={handleAudit}
+          disabled={isAuditing}
+          className={clsx(
+            'w-full mt-4 py-2 rounded border border-dashed text-[10px] uppercase font-bold tracking-widest transition-all flex items-center justify-center gap-2',
+            theme === 'dark' 
+              ? 'border-white/10 text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/5'
+              : 'border-gray-300 text-gray-500 hover:text-[var(--accent)] hover:border-[var(--accent)] hover:bg-green-50'
+          )}
+        >
+          {isAuditing ? <Loader2 size={12} className="animate-spin" /> : <Activity size={12} />}
+          {isAuditing ? 'Auditing...' : 'Run System Audit'}
+        </button>
       </div>
 
       {/* Cipher Library */}

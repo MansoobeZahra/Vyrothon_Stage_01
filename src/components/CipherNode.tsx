@@ -5,6 +5,7 @@ import { PipelineNode, NodeResult } from '../types'
 import { CIPHER_MAP } from '../ciphers'
 import { usePipelineStore } from '../store/pipelineStore'
 import { ConfigEditor } from './ConfigEditor'
+import { calculateEntropy } from '../utils/entropy'
 import clsx from 'clsx'
 import { GripVertical, X, ChevronDown, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { CipherIcons } from './CipherIcons'
@@ -183,7 +184,10 @@ export const CipherNode: React.FC<Props> = ({
                     ↓
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <span className="text-[10px] tracking-widest font-bold" style={{ color: headerColor }}>OUTPUT</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] tracking-widest font-bold" style={{ color: headerColor }}>OUTPUT</span>
+                      <span className="text-[10px] text-[var(--muted)] mono">Entropy: {calculateEntropy(result.output).toFixed(3)}</span>
+                    </div>
                     <span className={clsx('break-all leading-relaxed p-2 rounded-md font-semibold border', isDark ? 'bg-black/40 text-gray-100 border-white/5' : 'bg-white text-gray-900 border-gray-100')}>
                       {truncate(result.output) || <span className="text-[var(--muted)] italic opacity-50 font-normal">Empty string</span>}
                     </span>

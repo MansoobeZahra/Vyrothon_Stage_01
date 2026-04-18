@@ -34,11 +34,11 @@ export const xor: Cipher = {
     const key = String(config.key)
     if (!key) return hex
     // Each char is encoded as 4 hex digits
-    if (hex.length % 4 !== 0) throw new Error('Invalid XOR hex input (length not multiple of 4)')
+    if (hex.length % 4 !== 0) throw new Error('XOR Decryption Error: Input length must be a multiple of 4 (Hex-encoded).')
     let result = ''
     for (let i = 0; i < hex.length; i += 4) {
       const code = parseInt(hex.slice(i, i + 4), 16)
-      if (isNaN(code)) throw new Error(`Invalid hex at position ${i}: "${hex.slice(i, i + 4)}"`)
+      if (isNaN(code)) throw new Error(`XOR Decryption Error: Invalid hex character detected at position ${i}.`)
       const charIdx = i / 4
       result += String.fromCharCode(code ^ key.charCodeAt(charIdx % key.length))
     }

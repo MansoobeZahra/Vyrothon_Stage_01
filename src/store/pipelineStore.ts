@@ -46,6 +46,11 @@ interface PipelineStore {
 
   // Theme
   toggleTheme: () => void
+
+  // Premium Features
+  clearNodes: () => void
+  swapOutputToInput: () => void
+  auditPresets: () => Promise<Record<string, boolean>>
 }
 
 function snapshot(nodes: PipelineNode[]): PipelineNode[] {
@@ -241,6 +246,54 @@ export const usePipelineStore = create<PipelineStore>((set, get) => ({
       document.documentElement.classList.toggle('light', next === 'light')
       return { theme: next }
     }),
+
+  // ── Premium Features ──────────────────────────────────────────────────────
+
+  clearNodes: () => {
+    pushHistory(set, get, [])
+    set({ nodes: [], results: [], roundTripResult: null })
+  },
+
+  swapOutputToInput: () => {
+    const { results } = get()
+    if (results.length === 0) return
+    const last = results[results.length - 1]
+    if (last && !last.error) {
+      set({ plaintext: last.output, results: [], roundTripResult: null })
+    }
+  },
+
+  auditPresets: async () => {
+    const originalNodes = get().nodes
+    const originalText = get().plaintext
+    const report: Record<string, boolean> = {}
+
+    for (const preset of PRESETS) {
+      const nodes = preset.nodes.map(n => ({ ...n, id: uid() }))
+      let current = preset.plaintext
+      let success = false
+      try {
+        // Encrypt
+        for (const n of nodes) {
+          const cipher = CIPHER_MAP[n.cipherName]
+          current = cipher.encrypt(current, n.config)
+        }
+        // Decrypt
+        for (const n of [...nodes].reverse()) {
+          const cipher = CIPHER_MAP[n.cipherName]
+          current = cipher.decrypt(current, n.config)
+        }
+        success = current === preset.plaintext
+      } catch (e) {
+        success = false
+      }
+      report[preset.name] = success
+    }
+
+    // Restore state
+    set({ nodes: originalNodes, plaintext: originalText })
+    return report
+  },
 }))
 
 // Helper: push state to undo history

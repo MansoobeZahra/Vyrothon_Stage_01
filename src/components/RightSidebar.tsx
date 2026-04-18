@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { usePipelineStore } from '../store/pipelineStore'
 import clsx from 'clsx'
-import { Copy, Check, Upload, Download, Undo2, Redo2, Sun, Moon, ArrowDown, ArrowUp, AlertOctagon, X } from 'lucide-react'
+import { Copy, Check, Upload, Download, Undo2, Redo2, Sun, Moon, ArrowDown, ArrowUp, AlertOctagon, X, Repeat } from 'lucide-react'
+import { calculateEntropy } from '../utils/entropy'
 
 export const RightSidebar: React.FC = () => {
   const {
     plaintext, setPlaintext, mode, setMode, runPipeline, testRoundTrip,
     nodes, results, isRunning, roundTripResult, exportPipeline, importPipeline,
-    undo, redo, historyIndex, history, theme, toggleTheme
+    undo, redo, historyIndex, history, theme, toggleTheme,
+    clearNodes, swapOutputToInput
   } = usePipelineStore()
 
   const [copyLabel, setCopyLabel] = useState<React.ReactNode>(<><Copy size={12} className="inline mr-1" /> Copy</>)
@@ -18,6 +20,10 @@ export const RightSidebar: React.FC = () => {
   const finalOutput = finalResult && !finalResult.error ? finalResult.output : ''
   const hasError = results.some((r) => !!r.error)
   const canRun = nodes.length >= 3
+
+  const initialEntropy = calculateEntropy(plaintext)
+  const finalEntropy = finalOutput ? calculateEntropy(finalOutput) : 0
+  const entropyDiff = finalEntropy - initialEntropy
 
   const accentColor = mode === 'decrypt' ? '#0088ff' : '#00fa9a'
 
@@ -82,6 +88,7 @@ export const RightSidebar: React.FC = () => {
           <button onClick={redo} disabled={historyIndex >= history.length - 1} className={toolBtnClass} title="Redo"><Redo2 size={14} /></button>
           <button onClick={handleExport} className={toolBtnClass} title="Export"><Upload size={14} /></button>
           <button onClick={() => setShowImport(!showImport)} className={toolBtnClass} title="Import"><Download size={14} /></button>
+          <button onClick={clearNodes} className={clsx(toolBtnClass, 'hover:!text-red-400')} title="Clear Pipeline"><X size={14} /></button>
         </div>
       </div>
 
@@ -155,14 +162,25 @@ export const RightSidebar: React.FC = () => {
         <div className="flex-1 flex flex-col gap-1.5">
           <div className="flex items-center justify-between pl-1">
             <label className="text-[11px] text-[var(--muted)] font-semibold uppercase tracking-widest">Final Output</label>
-            <button
-              onClick={handleCopy}
-              disabled={!finalOutput}
-              className="text-[10px] px-2 py-0.5 rounded transition-colors disabled:opacity-30 font-bold tracking-wider"
-              style={{ color: accentColor }}
-            >
-              {copyLabel}
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={swapOutputToInput}
+                disabled={!finalOutput}
+                className="text-[10px] px-2 py-0.5 rounded transition-colors disabled:opacity-30 font-bold tracking-wider hover:bg-white/5"
+                title="Use as Input"
+                style={{ color: accentColor }}
+              >
+                <Repeat size={12} className="inline mr-1" /> Swap
+              </button>
+              <button
+                onClick={handleCopy}
+                disabled={!finalOutput}
+                className="text-[10px] px-2 py-0.5 rounded transition-colors disabled:opacity-30 font-bold tracking-wider hover:bg-white/5"
+                style={{ color: accentColor }}
+              >
+                {copyLabel}
+              </button>
+            </div>
           </div>
           <textarea
             readOnly
@@ -212,6 +230,28 @@ export const RightSidebar: React.FC = () => {
         >
           Round-Trip Test
         </button>
+
+        {finalOutput && !hasError && (
+          <div className={clsx(
+            'mt-2 p-3 rounded-lg border border-dashed flex items-center justify-between gap-4',
+            theme === 'dark' ? 'border-white/10 bg-black/20' : 'border-gray-200 bg-gray-50'
+          )}>
+            <div className="flex flex-col gap-1">
+              <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-bold">Enc Strength (Entropy)</span>
+              <div className="flex items-center gap-2">
+                 <span className="text-xs font-mono">{finalEntropy.toFixed(3)}</span>
+                 <span className={clsx('text-[10px] font-bold px-1.5 py-0.5 rounded', entropyDiff > 0 ? 'bg-green-500/10 text-green-400' : 'bg-gray-500/10 text-gray-400')}>
+                   {entropyDiff > 0 ? '+' : ''}{entropyDiff.toFixed(2)}
+                 </span>
+              </div>
+            </div>
+            <div className="h-8 w-px bg-white/5" />
+            <div className="flex flex-col gap-1 text-right">
+              <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-bold">Diffusion</span>
+              <span className="text-xs font-mono">{((finalEntropy/8)*100).toFixed(1)}%</span>
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   )
