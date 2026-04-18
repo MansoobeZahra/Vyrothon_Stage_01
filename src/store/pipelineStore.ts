@@ -117,6 +117,7 @@ export const usePipelineStore = create<PipelineStore>((set, get) => ({
 
   runPipeline: async () => {
     const { nodes, plaintext, mode } = get()
+    if (nodes.length < 3) return
     set({ isRunning: true, results: [], roundTripResult: null })
 
     const ordered = mode === 'encrypt' ? nodes : [...nodes].reverse()
@@ -151,6 +152,7 @@ export const usePipelineStore = create<PipelineStore>((set, get) => ({
 
   testRoundTrip: () => {
     const { nodes, plaintext } = get()
+    if (nodes.length < 3) return
     let current = plaintext
     try {
       // Encrypt pass

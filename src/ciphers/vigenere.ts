@@ -7,7 +7,6 @@ import { Cipher } from '../types'
  */
 export const vigenere: Cipher = {
   name: 'Vigenère',
-  icon: '🔑',
   description: 'Polyalphabetic substitution using a keyword.',
   configFields: [
     { name: 'keyword', label: 'Keyword (letters only)', type: 'text', placeholder: 'secret' },

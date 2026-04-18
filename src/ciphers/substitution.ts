@@ -5,7 +5,6 @@ const STANDARD = 'abcdefghijklmnopqrstuvwxyz'
 
 export const substitution: Cipher = {
   name: 'Substitution',
-  icon: '🔣',
   description: 'Replaces each letter with one from a custom 26-letter alphabet.',
   configFields: [
     {

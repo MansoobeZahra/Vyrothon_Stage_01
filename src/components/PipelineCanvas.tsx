@@ -15,7 +15,7 @@ import {
 import { usePipelineStore } from '../store/pipelineStore'
 import { CipherNode } from './CipherNode'
 import clsx from 'clsx'
-import { ArrowUp, AlertTriangle } from 'lucide-react'
+import { ArrowUp, AlertTriangle, CheckCircle2 } from 'lucide-react'
 
 export const PipelineCanvas: React.FC = () => {
   const { nodes, results, isRunning, mode, reorderNodes, theme } = usePipelineStore()
@@ -50,7 +50,9 @@ export const PipelineCanvas: React.FC = () => {
           </span>
           <span className="w-px h-4 bg-gray-500/30" />
           {nodes.length >= 3 ? (
-            <span style={{ color: accentColor }}>Valid Pipeline ✓</span>
+            <span style={{ color: accentColor }} className="flex items-center gap-1">
+              Valid Pipeline <CheckCircle2 size={14} />
+            </span>
           ) : (
             <span className="text-yellow-500 flex items-center gap-1">
               <AlertTriangle size={14} /> Add {3 - nodes.length} more
@@ -61,7 +63,9 @@ export const PipelineCanvas: React.FC = () => {
 
       {nodes.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-[var(--muted)] pb-20">
-          <div className="text-6xl opacity-20 filter grayscale">⛓️</div>
+          <div className="opacity-20 flex justify-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-git-commit-vertical"><path d="M12 3v6"/><circle cx="12" cy="12" r="3"/><path d="M12 15v6"/></svg>
+          </div>
           <h2 className="text-xl font-bold">Pipeline Empty</h2>
           <p className="text-sm">Click ciphers in the left sidebar to add them here.</p>
         </div>

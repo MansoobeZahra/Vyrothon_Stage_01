@@ -11,7 +11,6 @@ import { Cipher } from '../types'
  */
 export const railFence: Cipher = {
   name: 'Rail Fence',
-  icon: '🚂',
   description: 'Zigzag transposition cipher.',
   configFields: [
     { name: 'rails', label: 'Number of Rails (≥ 2)', type: 'number', placeholder: '3', min: 2, max: 20 },

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { usePipelineStore } from '../store/pipelineStore'
 import clsx from 'clsx'
+import { Copy, Check, Upload, Download, Undo2, Redo2, Sun, Moon, ArrowDown, ArrowUp, AlertOctagon, X } from 'lucide-react'
 
 export const RightSidebar: React.FC = () => {
   const {
@@ -9,7 +10,7 @@ export const RightSidebar: React.FC = () => {
     undo, redo, historyIndex, history, theme, toggleTheme
   } = usePipelineStore()
 
-  const [copyLabel, setCopyLabel] = useState('📋 Copy')
+  const [copyLabel, setCopyLabel] = useState<React.ReactNode>(<><Copy size={12} className="inline mr-1" /> Copy</>)
   const [showImport, setShowImport] = useState(false)
   const [importText, setImportText] = useState('')
 
@@ -23,8 +24,8 @@ export const RightSidebar: React.FC = () => {
   const handleCopy = () => {
     if (!finalOutput) return
     navigator.clipboard.writeText(finalOutput)
-    setCopyLabel('✅ Copied!')
-    setTimeout(() => setCopyLabel('📋 Copy'), 2000)
+    setCopyLabel(<><Check size={12} className="inline mr-1" /> Copied!</>)
+    setTimeout(() => setCopyLabel(<><Copy size={12} className="inline mr-1" /> Copy</>), 2000)
   }
 
   const handleExport = () => {
@@ -67,20 +68,20 @@ export const RightSidebar: React.FC = () => {
         <button
           onClick={toggleTheme}
           className={clsx(
-            'px-3 py-1.5 rounded-md text-xs border transition-colors',
+            'px-3 py-1.5 rounded-md text-xs border transition-colors flex items-center gap-2',
             theme === 'dark'
               ? 'border-white/10 text-gray-400 hover:text-white hover:bg-white/5'
               : 'border-gray-200 text-gray-600 hover:bg-gray-50'
           )}
         >
-          {theme === 'dark' ? '☀ Light' : '🌙 Dark'}
+          {theme === 'dark' ? <><Sun size={14} /> Light</> : <><Moon size={14} /> Dark</>}
         </button>
 
         <div className="flex gap-1">
-          <button onClick={undo} disabled={historyIndex <= 0} className={toolBtnClass} title="Undo">↩</button>
-          <button onClick={redo} disabled={historyIndex >= history.length - 1} className={toolBtnClass} title="Redo">↪</button>
-          <button onClick={handleExport} className={toolBtnClass} title="Export">⬆</button>
-          <button onClick={() => setShowImport(!showImport)} className={toolBtnClass} title="Import">⬇</button>
+          <button onClick={undo} disabled={historyIndex <= 0} className={toolBtnClass} title="Undo"><Undo2 size={14} /></button>
+          <button onClick={redo} disabled={historyIndex >= history.length - 1} className={toolBtnClass} title="Redo"><Redo2 size={14} /></button>
+          <button onClick={handleExport} className={toolBtnClass} title="Export"><Upload size={14} /></button>
+          <button onClick={() => setShowImport(!showImport)} className={toolBtnClass} title="Import"><Download size={14} /></button>
         </div>
       </div>
 
@@ -96,8 +97,12 @@ export const RightSidebar: React.FC = () => {
             value={importText}
             onChange={(e) => setImportText(e.target.value)}
           />
-          <button onClick={handleImport} className="px-3 py-2 rounded-md bg-[var(--accent)] text-black text-xs font-bold shadow-md">✓</button>
-          <button onClick={() => setShowImport(false)} className="text-[var(--muted)] hover:text-white">✕</button>
+          <button onClick={handleImport} className="px-3 py-2 rounded-md bg-[var(--accent)] text-black text-xs font-bold shadow-md flex items-center justify-center">
+            <Check size={16} />
+          </button>
+          <button onClick={() => setShowImport(false)} className="text-[var(--muted)] hover:text-white p-1">
+            <X size={16} />
+          </button>
         </div>
       )}
 
@@ -143,7 +148,7 @@ export const RightSidebar: React.FC = () => {
 
         <div className="flex items-center justify-center py-1">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)] bg-[var(--surface)] border border-[var(--surface-border)]">
-            {mode === 'encrypt' ? '↓' : '↑'}
+            {mode === 'encrypt' ? <ArrowDown size={14} /> : <ArrowUp size={14} />}
           </div>
         </div>
 
@@ -171,12 +176,20 @@ export const RightSidebar: React.FC = () => {
 
       {/* Primary Actions */}
       <div className="flex flex-col gap-3 mt-2">
+        {!canRun && (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-semibold">
+            <AlertOctagon size={16} className="flex-shrink-0" />
+            <span>Minimum 3 nodes required to process. Add {3 - nodes.length} more.</span>
+          </div>
+        )}
+
         {roundTripResult && (
           <div className={clsx(
-            'px-3 py-2.5 rounded-lg text-xs font-mono text-center shadow-inner border tracking-wide',
+            'px-3 py-2.5 rounded-lg text-xs font-mono text-center shadow-inner border tracking-wide flex items-center justify-center gap-2',
             roundTripResult.success ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'
-          )}>
-            {roundTripResult.success ? '✅ Perfect round-trip' : '❌ Integrity mismatch'}
+          )} title={roundTripResult.success ? 'Perfect round-trip' : 'Integrity mismatch'}>
+            {roundTripResult.success ? <Check size={14} /> : <X size={14} />}
+            <span>{roundTripResult.success ? 'Integrity Matched' : 'Integrity Mismatch'}</span>
           </div>
         )}
 

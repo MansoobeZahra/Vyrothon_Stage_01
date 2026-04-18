@@ -7,6 +7,7 @@ import { usePipelineStore } from '../store/pipelineStore'
 import { ConfigEditor } from './ConfigEditor'
 import clsx from 'clsx'
 import { GripVertical, X, ChevronDown, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { CipherIcons } from './CipherIcons'
 
 interface Props {
   node: PipelineNode
@@ -109,7 +110,7 @@ export const CipherNode: React.FC<Props> = ({
           {index + 1}
         </span>
 
-        <span className="text-xl" aria-hidden>{cipher?.icon}</span>
+        <span className="flex items-center justify-center text-gray-400 p-1" aria-hidden>{CipherIcons[node.cipherName]}</span>
         
         <div className="flex-1 flex items-center gap-2">
           <h3 className="font-bold text-base tracking-wide" style={{ color: isDark ? '#fff' : '#111' }}>

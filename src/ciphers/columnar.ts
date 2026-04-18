@@ -11,7 +11,6 @@ import { Cipher } from '../types'
  */
 export const columnar: Cipher = {
   name: 'Columnar',
-  icon: '📊',
   description: 'Columnar transposition using a keyword for column ordering.',
   configFields: [
     { name: 'keyword', label: 'Column Keyword', type: 'text', placeholder: 'secret' },

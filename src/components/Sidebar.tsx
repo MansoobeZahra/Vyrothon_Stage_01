@@ -2,7 +2,9 @@ import React from 'react'
 import { CIPHER_LIBRARY } from '../ciphers'
 import { usePipelineStore } from '../store/pipelineStore'
 import { PRESETS } from '../presets/presets'
+import { CipherIcons } from './CipherIcons'
 import clsx from 'clsx'
+import { Shield } from 'lucide-react'
 
 export const Sidebar: React.FC = () => {
   const { addNode, loadPreset, theme } = usePipelineStore()
@@ -21,8 +23,8 @@ export const Sidebar: React.FC = () => {
     >
       {/* Logo */}
       <div className="p-5 border-b border-white/5">
-        <div className="text-[var(--accent)] font-bold text-xl tracking-wider mono">
-          ◈ CipherStack
+        <div className="text-[var(--accent)] font-bold text-xl tracking-wider mono flex items-center gap-2">
+          <Shield size={24} /> CipherStack
         </div>
         <div className="text-[var(--muted)] text-xs mt-1">Node-Based Encryption Builder</div>
       </div>
@@ -70,7 +72,7 @@ export const Sidebar: React.FC = () => {
                       : 'border-gray-200 bg-white/60 hover:border-[var(--accent)] hover:bg-green-50'
                   )}
                 >
-                  <span className="text-lg flex-shrink-0">{cipher.icon}</span>
+                  <span className="text-gray-400 flex-shrink-0 p-1">{CipherIcons[cipher.name]}</span>
                   <div className="min-w-0">
                     <div className={clsx(
                       'text-xs font-semibold group-hover:text-[var(--accent)] transition-colors',

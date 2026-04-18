@@ -2,7 +2,6 @@ import { Cipher } from '../types'
 
 export const base64: Cipher = {
   name: 'Base64',
-  icon: '📦',
   description: 'Encodes as Base64 (no config needed).',
   configFields: [],
   defaultConfig: {},
@@ -15,7 +14,6 @@ export const base64: Cipher = {
 
 export const rot13: Cipher = {
   name: 'ROT13',
-  icon: '🔄',
   description: 'Rotates letters by 13 (self-inverting).',
   configFields: [],
   defaultConfig: {},
@@ -28,7 +26,6 @@ export const rot13: Cipher = {
 
 export const reverse: Cipher = {
   name: 'Reverse',
-  icon: '⟵',
   description: 'Reverses the entire string (self-inverting).',
   configFields: [],
   defaultConfig: {},
@@ -38,7 +35,6 @@ export const reverse: Cipher = {
 
 export const atbash: Cipher = {
   name: 'Atbash',
-  icon: '🔁',
   description: 'Maps A↔Z, B↔Y, … (self-inverting).',
   configFields: [],
   defaultConfig: {},

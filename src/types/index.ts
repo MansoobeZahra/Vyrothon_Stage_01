@@ -13,7 +13,6 @@ export interface ConfigField {
 
 export interface Cipher {
   name: string
-  icon: string
   description: string
   configFields: ConfigField[]
   defaultConfig: Record<string, string | number>

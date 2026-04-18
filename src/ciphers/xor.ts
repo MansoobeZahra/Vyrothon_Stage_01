@@ -11,7 +11,6 @@ import { Cipher } from '../types'
  */
 export const xor: Cipher = {
   name: 'XOR',
-  icon: '⊕',
   description: 'XORs each character with a repeating key. Outputs hex.',
   configFields: [
     { name: 'key', label: 'Key (string)', type: 'text', placeholder: 'hackathon' },

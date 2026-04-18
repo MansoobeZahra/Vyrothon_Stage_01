@@ -2,7 +2,6 @@ import { Cipher } from '../types'
 
 export const caesar: Cipher = {
   name: 'Caesar',
-  icon: '🔤',
   description: 'Shifts each letter by a fixed amount.',
   configFields: [
     { name: 'shift', label: 'Shift Amount', type: 'number', placeholder: '3', min: -25, max: 25 },
